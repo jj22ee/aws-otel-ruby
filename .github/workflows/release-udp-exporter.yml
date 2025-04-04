@@ -5,6 +5,7 @@ on:
       version:
         description: The version to tag the release with, e.g., 1.2.0
         required: true
+  push:
 
 env:
   RUBY_VERSION: "3.2"
@@ -75,4 +76,19 @@ jobs:
             exit 1
           fi
 
-      # TODO: Publish OTLP UDP Exporter to RubyGems
+      # - name: Build gem
+      #   run: |
+      #     cd exporter/otlp-udp
+      #     gem build aws-distro-opentelemetry-exporter-xray-udp.gemspec
+      # # https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-rubygems-registry
+      # - name: Set API key credentials
+      #   env:
+      #     RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+      #   run: |
+      #     echo ":rubygems_api_key: $RUBYGEMS_API_KEY" > ~/.gem/credentials
+      #     chmod 0600 ~/.gem/credentials
+      # # Implicitly verifies that CHANGELOG and version.rb match
+      # - name: Push gem
+      #   run: gem push aws-distro-opentelemetry-exporter-xray-udp-${{ inputs.udp-exporter-version }}.gem
+      # - name: Clear credentials
+      #   run: rm -f ~/.gem/credentials
