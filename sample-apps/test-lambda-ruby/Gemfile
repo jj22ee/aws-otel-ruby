@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+# gem "rails"
+gem 'opentelemetry-sdk'
+gem 'opentelemetry-exporter-otlp'
+gem 'opentelemetry-propagator-xray'
+gem 'aws-distro-opentelemetry-exporter-xray-udp'
+gem 'opentelemetry-instrumentation-aws_lambda'
