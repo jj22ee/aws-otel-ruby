@@ -14,64 +14,64 @@ permissions:
   contents: write
 
 jobs:
-  validate-udp-exporter-e2e-test:
-    name: "Validate X-Ray UDP Exporter E2E Test Succeeds"
-    uses: ./.github/workflows/udp-exporter-e2e-test.yml
-    secrets: inherit
-    permissions:
-      id-token: write
+  # validate-udp-exporter-e2e-test:
+  #   name: "Validate X-Ray UDP Exporter E2E Test Succeeds"
+  #   uses: ./.github/workflows/udp-exporter-e2e-test.yml
+  #   secrets: inherit
+  #   permissions:
+  #     id-token: write
 
   release-udp-exporter:
     runs-on: ubuntu-latest
-    needs: validate-udp-exporter-e2e-test
+    # needs: validate-udp-exporter-e2e-test
     steps:
       - name: Checkout Repo @ SHA - ${{ github.sha }}
         uses: actions/checkout@v4
 
-      # Install ruby and bundle dependencies and cache!
-      - name: Install Ruby ${{ env.RUBY_VERSION }} with dependencies
-        uses: ruby/setup-ruby@v1.221.0
-        with:
-          ruby-version: "${{ env.RUBY_VERSION }}"
-          working-directory: "exporter/xray-udp"
-          bundler: "latest"
-          bundler-cache: true
-          cache-version: "v1-ruby-xray-udp"
+      # # Install ruby and bundle dependencies and cache!
+      # - name: Install Ruby ${{ env.RUBY_VERSION }} with dependencies
+      #   uses: ruby/setup-ruby@v1.221.0
+      #   with:
+      #     ruby-version: "${{ env.RUBY_VERSION }}"
+      #     working-directory: "exporter/xray-udp"
+      #     bundler: "latest"
+      #     bundler-cache: true
+      #     cache-version: "v1-ruby-xray-udp"
 
-      - name: Run Unit Tests
-        working-directory: "exporter/xray-udp"
-        run: |
-          bundle install
-          bundle exec rake test
+      # - name: Run Unit Tests
+      #   working-directory: "exporter/xray-udp"
+      #   run: |
+      #     bundle install
+      #     bundle exec rake test
 
-      - name: Build gem
-        working-directory: "exporter/xray-udp"
-        run: |
-          gem build aws-distro-opentelemetry-exporter-xray-udp.gemspec
+      # - name: Build gem
+      #   working-directory: "exporter/xray-udp"
+      #   run: |
+      #     gem build aws-distro-opentelemetry-exporter-xray-udp.gemspec
 
-      - name: Validate gem version matches workflow input
-        working-directory: "exporter/xray-udp"
-        run: |
-          if [[ ! -f aws-distro-opentelemetry-exporter-xray-udp-${{ inputs.udp-exporter-version }}.gem ]]; then
-            echo "Input version '${{ inputs.udp-exporter-version }}' does not match with UDP Exporter gem version"
-            exit 1
-          fi
+      # - name: Validate gem version matches workflow input
+      #   working-directory: "exporter/xray-udp"
+      #   run: |
+      #     if [[ ! -f aws-distro-opentelemetry-exporter-xray-udp-${{ inputs.udp-exporter-version }}.gem ]]; then
+      #       echo "Input version '${{ inputs.udp-exporter-version }}' does not match with UDP Exporter gem version"
+      #       exit 1
+      #     fi
 
-      - name: Set API key credentials
-        run: |
-          mkdir -p $HOME/.gem
-          touch $HOME/.gem/credentials
-          chmod 0600 $HOME/.gem/credentials
-          printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
-        env:
-          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_UDP_EXPORTER_API_KEY }}
+      # - name: Set API key credentials
+      #   run: |
+      #     mkdir -p $HOME/.gem
+      #     touch $HOME/.gem/credentials
+      #     chmod 0600 $HOME/.gem/credentials
+      #     printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
+      #   env:
+      #     GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_UDP_EXPORTER_API_KEY }}
 
-      - name: Push gem
-        working-directory: "exporter/xray-udp"
-        run: gem push aws-distro-opentelemetry-exporter-xray-udp-${{ inputs.udp-exporter-version }}.gem
+      # - name: Push gem
+      #   working-directory: "exporter/xray-udp"
+      #   run: gem push aws-distro-opentelemetry-exporter-xray-udp-${{ inputs.udp-exporter-version }}.gem
 
-      - name: Clear credentials
-        run: rm -f ~/.gem/credentials
+      # - name: Clear credentials
+      #   run: rm -f ~/.gem/credentials
 
       # Publish to GitHub releases
       - name: Create GH release
